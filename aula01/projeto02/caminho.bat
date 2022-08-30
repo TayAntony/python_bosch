@@ -1,0 +1,1 @@
+S:\PM\ter\ets\Inter_Setor\COMPARTILHADO\APRENDIZES\SMART_AUTOMATION_05\TAYSSA_ANTONIASSE_DE_OLIVEIRA\python_bosch\aula01\projeto02 python "main.py"
