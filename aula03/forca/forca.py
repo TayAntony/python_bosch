@@ -1,12 +1,27 @@
+
 import inquirer
 import random
 import forca_img
 import sys
 
-palavra_secreta = ''
-anderlines_palavra_secreta = []
-palavra_sorteada = False
+PALAVRA_SECRETA = ''
+ANDERLINES_PALAVRA_SECRETA = []
+PALAVRA_SORTEADA = False
+INDICE_SECRET_WORD = ''
+TENTATIVAS = 6
+LETRAS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+CHUTES = []
+
 def menu():
+    global PALAVRA_SECRETA, ANDERLINES_PALAVRA_SECRETA, PALAVRA_SORTEADA, INDICE_SECRET_WORD, TENTATIVAS, LETRAS, CHUTES
+    PALAVRA_SECRETA = ''
+    ANDERLINES_PALAVRA_SECRETA = []
+    PALAVRA_SORTEADA = False
+    INDICE_SECRET_WORD = ''
+    TENTATIVAS = 6
+    LETRAS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    CHUTES = []
+
     while True:
             perguntas = [
                 inquirer.List(
@@ -34,13 +49,12 @@ def menu():
                 sair()
 
 
-#TODO Verificar se a letra informada existe na palavra
-#TODO Encontrar a posição da letra na palavra
-#TODO Substituir o underline pela letra na posição
-#BINARYSEARCH 
+#TODO ARRUMAR A REMOÇÃO DE PALAVRAS
 
 def sortear_palavra():
-    palavras = open(r'./forca/palavras.txt', 'r', encoding='utf-8')
+    global ANDERLINES_PALAVRA_SECRETA, PALAVRA_SECRETA, INDICE_SECRET_WORD, PALAVRA_SORTEADA
+
+    palavras = open(r'./palavras.txt', 'r', encoding='utf-8')
     cadastros = palavras.readlines()
     lista_palavras = []
 
@@ -48,25 +62,41 @@ def sortear_palavra():
         separando = word[:-1]
         lista_palavras.append(separando)
 
-    indice_secret_word = random.randint(0, len(lista_palavras))
-    palavra_secreta = lista_palavras[indice_secret_word]
+    INDICE_SECRET_WORD = random.randint(0, len(lista_palavras)-1)
+    PALAVRA_SECRETA = lista_palavras[INDICE_SECRET_WORD]
 
-    anderlines_palavra_secreta = '_ '*len(palavra_secreta)
+    ANDERLINES_PALAVRA_SECRETA = list('_'*len(PALAVRA_SECRETA))
     palavras.close()
-    print(forca_img.forca1()[0], end='')
-    print(anderlines_palavra_secreta)
-    palavra_sorteada = True
-    return indice_secret_word, palavra_secreta, anderlines_palavra_secreta
+    PALAVRA_SORTEADA = True
+    return INDICE_SECRET_WORD, PALAVRA_SECRETA, ANDERLINES_PALAVRA_SECRETA
     
 
-def print_forca(anderlines_palavra_secreta, posicao_forca):
-    print(forca_img.forca1()[0], end='')
-    print(anderlines_palavra_secreta)
+def print_forca():
+    global ANDERLINES_PALAVRA_SECRETA
+    print(forca_img.forca1()[TENTATIVAS], end='')
+    print(' '.join(ANDERLINES_PALAVRA_SECRETA))
+
 
 def jogo_forca():
-    if not palavra_sorteada:
-        indice_secret_word, palavra_secreta, anderlines_palavra_secreta = sortear_palavra()
+    if not PALAVRA_SORTEADA:
+        INDICE_SECRET_WORD, PALAVRA_SECRETA, ANDERLINES_PALAVRA_SECRETA = sortear_palavra()
+
     while True:
+
+        if ''.join(ANDERLINES_PALAVRA_SECRETA) == PALAVRA_SECRETA:
+            print_forca()
+            print('''
+\033[32mPARABÉNS, VOCÊ ACERTOU!
+            \033[0;0m''')
+            menu()
+        elif TENTATIVAS == 0:
+            print_forca()
+            print('''
+\033[1;91mVOCÊ É BRONZE E PERDEU!
+            \033[0;0m''')
+            print(f'\033[36mA palavra sorteada era: {PALAVRA_SECRETA}\033[0;0m')
+            menu()
+        else:
             opcoes_jogo = [
                 inquirer.List(
                     'escolha',
@@ -75,47 +105,54 @@ def jogo_forca():
                 )
             ]
 
+            print_forca()
             respostas = inquirer.prompt(opcoes_jogo)
-
+            
             if respostas['escolha'] == 'Pedir dica':
-                dica(indice_secret_word)
-                print_forca(anderlines_palavra_secreta, 0)
-
+                dica(INDICE_SECRET_WORD)
+                
             elif respostas['escolha'] == 'Chutar letra':
-                chute(palavra_secreta)
+                chute(PALAVRA_SECRETA)
 
             elif respostas['escolha'] == 'Sair':
                 sair()
+            
 
             
-def dica(indice_secret_word):
-    acessar_dicas = open(r'./forca/dicas.txt', 'r', encoding='utf-8')
+def dica(INDICE_SECRET_WORD):
+    acessar_dicas = open(r'./dicas.txt', 'r', encoding='utf-8')
     dicas = acessar_dicas.readlines()
-    dica = dicas[indice_secret_word]
+    dica = dicas[INDICE_SECRET_WORD]
     print(f'DICA =', dica)
     
 
-def chute(palavra_secreta, anderlines_palavra_secreta):
-    letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ç', 'Sair']
-    while True:
-            letra = [
-                inquirer.List(
-                    'escolha',
-                    message = 'TENTATIVA',
-                    choices = letras
-                )
-            ]
+def chute(PALAVRA_SECRETA):
+    global LETRAS, CHUTES
+    letra = [
+        inquirer.List(
+            'escolha',
+            message = 'TENTATIVA',
+            choices = LETRAS
+        )
+    ]
 
-            respostas = inquirer.prompt(letra)
-            letras.remove(respostas['escolha'])
-            verificar_letra(respostas['escolha'], palavra_secreta)
+    respostas = inquirer.prompt(letra)
+    CHUTES.append(respostas['escolha'])
+    LETRAS.remove(respostas['escolha'])
+    
+    verificar_letra(respostas['escolha'], PALAVRA_SECRETA)
+    print(f'CHUTES: {CHUTES}')
 
-def verificar_letra(letra_escolhida, palavra_secreta):
-    if letra_escolhida in palavra_secreta:
-        for index, letra in enumerate(palavra_secreta):
+
+def verificar_letra(letra_escolhida, PALAVRA_SECRETA):
+    global TENTATIVAS
+    if letra_escolhida in PALAVRA_SECRETA:
+        for index, letra in enumerate(PALAVRA_SECRETA):
             if letra_escolhida == letra:
-                print(index, letra)
-  
+                ANDERLINES_PALAVRA_SECRETA[index] = letra
+    else:
+        TENTATIVAS -= 1
+
 
 def add_remove():
     while True:
@@ -148,10 +185,10 @@ def add():
     confirmar = input(f'PALAVRA = {palavra}\nDICA = {dica}\nAs informações estão corretas? ').upper().strip()
     if confirmar == 'S':
         print("\33[32mPalavra adicionada com sucesso\33[m")
-        palavras = open(r'./forca/palavras.txt', 'a', encoding='utf-8')
+        palavras = open(r'./palavras.txt', 'a', encoding='utf-8')
         palavras.write(f'{palavra}\n')
         palavras.close()
-        dicas = open(r'./forca/dicas.txt', 'a', encoding='utf-8')
+        dicas = open(r'./dicas.txt', 'a', encoding='utf-8')
         dicas.write(f'{dica}\n')
         dicas.close()
         return menu()
@@ -161,8 +198,8 @@ def add():
 
 def remove():
     print('Qual palavra quer remover? ')
-    abrir_palavra = open(r'./forca/palavras.txt', 'r', encoding='utf-8')
-    abrir_dicas = open(r'./forca/dicas.txt', 'r', encoding='utf-8')
+    abrir_palavra = open(r'./palavras.txt', 'r', encoding='utf-8')
+    abrir_dicas = open(r'./dicas.txt', 'r', encoding='utf-8')
 
     print_words = abrir_palavra.readlines()
     print_tips = abrir_dicas.readlines()
@@ -194,7 +231,7 @@ def remove():
             indice_palavra = indice
     lista_palavras.remove(respostas)
 
-    palavras_file = open(r'./forca/palavras.txt', 'w', encoding='utf-8')
+    palavras_file = open(r'./palavras.txt', 'w', encoding='utf-8')
     string_palavras = '\n'.join(lista_palavras)
     palavras_file.write(string_palavras)
 
@@ -204,15 +241,16 @@ def remove():
 
 
     lista_dicas.pop(indice_palavra)
-    dicas_file = open(r'./forca/dicas.txt', 'w', encoding='utf-8')
+    dicas_file = open(r'./dicas.txt', 'w', encoding='utf-8')
     string_dicas = '\n'.join(lista_dicas)
     dicas_file.write(string_dicas)
+    menu()
   
 
 def view_tips_words():
     print('\033[1;96mPALAVRA\033[0;0m = \033[1;92mDICA\033[0;0m')
-    abrir_palavra = open(r'./forca/palavras.txt', 'r', encoding='utf-8')
-    abrir_dica = open(r'./forca/dicas.txt', 'r', encoding='utf-8')
+    abrir_palavra = open(r'./palavras.txt', 'r', encoding='utf-8')
+    abrir_dica = open(r'./dicas.txt', 'r', encoding='utf-8')
     print_words = abrir_palavra.readlines()
     print_tips = abrir_dica.readlines()
     lista_palavras = []
