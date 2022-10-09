@@ -1,6 +1,6 @@
 
 def forca1():
-    morreu = [f'''
+    lista_imagens_forca = [f'''
  _______
 |       |
 |
@@ -8,62 +8,57 @@ def forca1():
 |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 |
 >>> Palavra: ''', 
-    '''
+'''
  _______
 |       |O
 |       
 |       
 |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 |
->>> Palavra: 
-    ''',
-    '''
+>>> Palavra: ''',
+'''
  _______
 |       |O
 |        T
 |       
 |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 |
->>> Palavra: 
-    ''',
-    '''
+>>> Palavra: ''',
+'''
  _______
 |       |O
 |        T
 |       /
 |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾    
 |
->>> Palavra: 
-    ''',
-    '''
+>>> Palavra: ''',
+'''
  _______
 |       |O
 |        T
 |       / \ 
 |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾        
 |
->>> Palavra: 
-    ''',
-    '''
+>>> Palavra: ''',
+'''
  _______
 |       |O
 |       /T 
 |       / \ 
 |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾       
 |
->>> Palavra: 
-    ''', 
-    '''
+>>> Palavra: ''', 
+'''
  _______
 |       |
 |       O
 |      /T\ 
 |‾‾‾‾\ / \ /‾‾‾‾‾‾‾
 |    /     \ 
->>> Palavra: 
-    '''
+>>> Palavra: '''
 ]
-    return morreu
+    lista_imagens_forca.reverse()
+    return lista_imagens_forca
 
 if __name__ == '__main__':
     forca1()
