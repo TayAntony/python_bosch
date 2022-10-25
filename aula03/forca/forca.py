@@ -1,4 +1,3 @@
-
 import inquirer
 import random
 import forca_img
@@ -226,11 +225,12 @@ def remove():
     respostas = inquirer.prompt(palavras)['escolha']
     abrir_palavra.close()
     indice_palavra = -1
+
     for indice, palavra in enumerate(lista_palavras):
         if palavra == respostas:
             indice_palavra = indice
-    lista_palavras.remove(respostas)
 
+    lista_palavras.pop(indice_palavra)
     palavras_file = open(r'./palavras.txt', 'w', encoding='utf-8')
     string_palavras = '\n'.join(lista_palavras)
     palavras_file.write(string_palavras)
@@ -238,7 +238,6 @@ def remove():
     print()
     print(f'\033[1;32mPalavra {respostas} removida com sucesso!\033[0;0m')
     palavras_file.close()
-
 
     lista_dicas.pop(indice_palavra)
     dicas_file = open(r'./dicas.txt', 'w', encoding='utf-8')
