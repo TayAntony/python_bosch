@@ -1,6 +1,7 @@
 from random import randint
 from time import sleep
 import inquirer
+import sys
 
 class Jogo:
     def __init__(self):
@@ -9,6 +10,8 @@ class Jogo:
         self.numero_pc = 0
         self.valor_jogada = 2
         self.saldo_jogador = 0
+        self.revanche_bool = True
+        self.vitoria = False
     
     def inicio_jogo(self):
         print('\033[1;35m-=-=-=-=- CASSINO DA TAY -=-=-=-=-\033[0;0m')
@@ -33,6 +36,7 @@ class Jogo:
         print('-=-'*25)
         sleep(1)
         self.obter_saldo_user()
+        
 
     def obter_saldo_user(self):
         while True:
@@ -47,6 +51,8 @@ class Jogo:
             print('\033[31mSeu saldo deve ser válido ou maior que R$ 2,00\033[0;0m')
             continue
         self.obter_numero_user()
+        self.sortear_numero()
+        
 
     def obter_numero_user(self):
         opcoes_jogador = [
@@ -60,6 +66,7 @@ class Jogo:
         self.numero_jogador = inquirer.prompt(opcoes_jogador)['escolha']
         self.obter_numero_pc()
         
+        
     def obter_numero_pc(self):
         self.numero_pc = self.numero_jogador
         while True:
@@ -68,8 +75,9 @@ class Jogo:
                 continue
             print(f'O número do PC é: {self.numero_pc}')
             print(f'O seu número é: {self.numero_jogador}')
+            break
             sleep(1)
-            self.sortear_numero()
+        
 
     def sortear_numero(self):
         print('Jogando o dado... 🎲')
@@ -78,30 +86,15 @@ class Jogo:
         print(f'O número sorteado foi: {self.numero_sorteado}')
 
         if self.numero_sorteado == self.numero_jogador:
-             self.revanche()
+            self.vitoria = True
+            self.revanche()
+                
 
         elif self.numero_sorteado == self.numero_pc:
+            self.vitoria = False
             print('\033[1;31mInfelizmente você perdeu!\033[0;0m')
             self.print_saldo_atual()
-            
-            opcoes_jogar_novamente = [
-                inquirer.List(
-                    'escolha',
-                message = 'JOGAR NOVAMENTE?',
-                choices = ('Sim', 'Não'))]
-            jogar_novamente = inquirer.prompt(opcoes_jogar_novamente)['escolha']
-
-            if jogar_novamente == 'Sim':
-                if self.saldo_jogador <= 0:
-                    print('Você está pobre, volte depois')
-                else:
-                    self.saldo_jogador -= self.valor_jogada
-                    self.print_saldo_atual()
-                    self.obter_numero_user()
-            else:
-                print('😈 Pode ir passando o dinheiro 😈')
-                self.print_saldo_atual()
-        
+            self.novamente()
         else:
             sleep(1)
             print('\033[33mEmpate\033[0;0m')
@@ -109,6 +102,32 @@ class Jogo:
 
     def print_saldo_atual(self):
         print(f'\033[32mSaldo atual: R$ {self.saldo_jogador}\033[0;0m')
+
+    def novamente(self):
+        self.valor_jogada = 2
+        opcoes_jogar_novamente = [
+            inquirer.List(
+                'escolha',
+            message = 'JOGAR NOVAMENTE?',
+            choices = ('Sim', 'Não'))]
+        jogar_novamente = inquirer.prompt(opcoes_jogar_novamente)['escolha']
+
+        if jogar_novamente == 'Sim':
+            if self.saldo_jogador <= 1:
+                print('Você está pobre, volte depois')
+                sys.exit()
+            else:
+                self.saldo_jogador -= self.valor_jogada
+                self.print_saldo_atual()
+                self.obter_numero_user()
+                self.sortear_numero()
+                
+        else:
+            if self.vitoria == True:
+                print('Até a próxima DEV 🥺')
+            else:
+                print('Até a próxima derrota... 😈')
+            sys.exit()
 
     def revanche(self):
         print('\033[35mParabéns, você venceu! Aceita a revanche?\033[0;0m')
@@ -123,19 +142,40 @@ class Jogo:
         if revanche == 'Sim':
             if self.saldo_jogador <= 0:
                 print('Você está pobre, volte depois')
+                sys.exit()
             else:
                 self.valor_jogada += 2
                 self.obter_numero_user()
-                if self.numero_sorteado == self.numero_jogador:
-                    print('\033[34mParabéns, você venceu novamente! Aqui estão seus R$ 8,00\033[0;0m')
-                    self.saldo_jogador += self.valor_jogada*2
-                    self.print_saldo_atual()
-                else: 
-                    print('Na revanche eu sou o mestre HEHEHE 🤪')
+                while True:
+                    print('Jogando o dado... 🎲')
+                    sleep(1)
+                    self.numero_sorteado = randint(1, 6)
+                    print(f'O número sorteado foi: {self.numero_sorteado}')
+
+                    if self.numero_sorteado == self.numero_jogador:
+                        self.revanche_ganha()
+
+                    elif self.numero_sorteado == self.numero_pc:
+                        print('\033[1;31mNa revanche eu sou o mestre HEHEHE \033[0;0m🤪')
+                        self.print_saldo_atual()
+                        self.novamente()
+                    else:
+                        sleep(1)
+                        print('\033[33mEmpate\033[0;0m')
+                        
+
         else:
             print(f'Então fique feliz com R$ {self.saldo_jogador}, covarde 🙄')
+            sys.exit()
+
+    def revanche_ganha(self):
         
+        print('\033[34mParabéns, você venceu novamente! Aqui estão seus R$ 4,00\033[0;0m')
+        self.saldo_jogador += 4
+        self.print_saldo_atual()
+        self.novamente()
 
 if __name__ == '__main__':
     dados = Jogo()
     dados.inicio_jogo()
+    
