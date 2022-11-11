@@ -1,0 +1,46 @@
+{
+    "cSpell.ignoreWords": [
+        "Cada",
+        "Digite",
+        "Jogo",
+        "REGRAS",
+        "SEGUINTES",
+        "Vence",
+        "Você",
+        "cegas",
+        "computador",
+        "escolhe",
+        "escolheu",
+        "escolhido",
+        "inicial",
+        "inicio",
+        "jogada",
+        "jogado",
+        "jogador",
+        "jogo",
+        "lados",
+        "numero",
+        "obter",
+        "pedir",
+        "pode",
+        "rodada",
+        "saldo",
+        "seja",
+        "sorteado",
+        "tirando",
+        "tiver",
+        "valendo",
+        "valores",
+        "vencer",
+        "vindo",
+        "você"
+    ],
+    "cSpell.customDictionaries": {
+        "custom-dictionary-workspace": {
+            "name": "custom-dictionary-workspace",
+            "path": "${workspaceFolder:aula04}/.cspell/custom-dictionary-workspace.txt",
+            "addWords": true,
+            "scope": "workspace"
+        }
+    }
+}
