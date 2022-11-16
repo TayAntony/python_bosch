@@ -360,6 +360,13 @@ class Janela(QMainWindow):  # Herança
         self.lbl_resultado.hide()
         self.fim_jogo.show()
         self.lbl_vencedor.show()
+        if self.placar_computador > self.placar_jogador:
+            self.imagem_vencedor.setPixmap(QtGui.QPixmap("imagens_ppt/pc1.png"))
+        elif self.placar_computador < self.placar_jogador:
+            self.imagem_vencedor.setPixmap(QtGui.QPixmap("imagens_ppt/player1.png"))
+        elif self.placar_computador == self.placar_jogador:
+            self.lbl_vencedor.setText("      EMPATE!!!")
+            self.imagem_vencedor.setPixmap(QtGui.QPixmap("imagens_ppt/empate.png"))
         self.imagem_vencedor.show()
         self.lbl_novamente.show()
         self.btn_sim.show()
