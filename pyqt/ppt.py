@@ -1,14 +1,15 @@
+import os
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QToolTip
+from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QLabel
 from PyQt5 import QtGui
-from PyQt5.QtGui import QMovie
-from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtCore import QTimer
 from random import randint
 
+def iniciar():
+    j = Janela()
+    
 
 class Janela(QMainWindow):  # Herança
     def __init__(self):
@@ -26,6 +27,7 @@ class Janela(QMainWindow):  # Herança
         self.placar_computador = 0
         self.placar_empate = 0
         self.jogada_usuario = "Demorou"
+        self.primeira_vez = True
 
         self.start = QPushButton("PLAY", self)
         self.start.move(350, 400)
@@ -292,14 +294,18 @@ class Janela(QMainWindow):  # Herança
             self.qtimer_timer_jogo.start(1500)
         
         if self.jogada_usuario == 'Demorou':
-            self.mostrar_resultado("DEMOROU", 'red')
-            self.placar_computador += 1
-            self.placar_pc.setText(str(self.placar_computador))
+            if not self.primeira_vez:
+                self.mostrar_resultado("DEMOROU", 'red')
+                self.placar_computador += 1
+                self.placar_pc.setText(str(self.placar_computador))
+            else:
+                self.primeira_vez = False
 
         elif self.jogada_computador == self.jogada_usuario:
             self.placar_empate += 1
             self.mostrar_resultado("EMPATE", 'yellow')
         else:
+            
             if self.jogada_computador == "Pedra": #jogou pedra
                 if self.jogada_usuario == "Papel":
                     self.mostrar_resultado("VITÓRIA", 'green')
@@ -396,14 +402,8 @@ class Janela(QMainWindow):  # Herança
 
 
     def novamente(self):
-        self.fim_jogo.hide()
-        self.lbl_novamente.hide()
-        self.btn_nao.hide()
-        self.btn_sim.hide()
-        self.lbl_vencedor.hide()
-        self.imagem_vencedor.hide()
-        self.placar_computador = 0
-        self.placar_jogador = 0
+        self.close()
+        iniciar()
 
 
     def carregar_janela(self):
@@ -455,5 +455,5 @@ class Janela(QMainWindow):  # Herança
 
 if __name__ == "__main__":
     aplicacao = QApplication(sys.argv)
-    j = Janela()
+    iniciar()
     sys.exit(aplicacao.exec())
