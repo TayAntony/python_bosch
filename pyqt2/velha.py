@@ -19,20 +19,17 @@ class Janela(QMainWindow): #Herança
         self.placar_usuario = 0
         self.placar_pc = 0
         self.placar_velha = 0
-        self.empate = False
-        self.vencedor = False
+        self.vez = 'jogador1'
         self.titulo="JOGO DA VELHA"
-        self.botao_preenchido_a1 = False
-        self.botao_preenchido_a2 = False
-        self.botao_preenchido_a3 = False
-        self.botao_preenchido_b1 = False
-        self.botao_preenchido_b2 = False
-        self.botao_preenchido_b3 = False
-        self.botao_preenchido_c1 = False
-        self.botao_preenchido_c2 = False
-        self.botao_preenchido_c3 = False
-
-
+        self.botao_a1_bool = False
+        self.botao_a2_bool = False
+        self.botao_a3_bool = False
+        self.botao_b1_bool = False
+        self.botao_b2_bool = False
+        self.botao_b3_bool = False
+        self.botao_c1_bool = False
+        self.botao_c2_bool = False
+        self.botao_c3_bool = False
 
         self.boas_vindas = QLabel(self)
         self.boas_vindas.setText("Seja bem vindo ao meu jogo!")
@@ -48,22 +45,29 @@ class Janela(QMainWindow): #Herança
 
         self.botao_play = QPushButton("PLAY", self)
         self.botao_play.move(220, 450)
-        self.botao_play.resize(150, 60)
+        self.botao_play.resize(140, 60)
         self.botao_play.setStyleSheet('QPushButton {font:30px bold; color: "black"; border:2px solid black; background: "white"; border-radius:10px} QPushButton:hover{background:"black"; color:"white"}')
         self.botao_play.clicked.connect(self.play_botao)
+
+        self.botao_sair = QPushButton("SAIR DO JOGO", self)
+        self.botao_sair.move(500, 5)
+        self.botao_sair.resize(85, 20)
+        self.botao_sair.setStyleSheet('QPushButton {font:10px; color: "red"; border:2px solid red; background: "white"; border-radius:10px} QPushButton:hover{background:"red"; color:"white"; font:bold}')
+        self.botao_sair.clicked.connect(self.sair)
+        self.botao_sair.hide()
 
         self.usuario_joga = QLabel(self)
         self.usuario_joga.move(70, 20)
         self.usuario_joga.resize(250, 40)
         self.usuario_joga.setStyleSheet('QLabel {color: "blue"; font: 30px}')
-        self.usuario_joga.setText("Você joga: "+ self.forma_usuario)
+        self.usuario_joga.setText("Jogador 1: "+ self.forma_usuario)
         self.usuario_joga.hide()
 
         self.pc_joga = QLabel(self)
         self.pc_joga.move(70, 70)
         self.pc_joga.resize(250, 40)
         self.pc_joga.setStyleSheet('QLabel {color: "red"; font: 30px}')
-        self.pc_joga.setText("O Pc joga: "+ self.forma_pc)
+        self.pc_joga.setText("Jogador 2: "+ self.forma_pc)
         self.pc_joga.hide()
 
         self.lbl_vencedor = QLabel(self)
@@ -73,13 +77,26 @@ class Janela(QMainWindow): #Herança
         self.lbl_vencedor.setText("Vencedor: ")
         self.lbl_vencedor.hide()
 
-        self.imagem_vencedor = QLabel(self)
-        self.imagem_vencedor.move(500, 20)
-        self.imagem_vencedor.resize(100, 100)
-        self.imagem_vencedor.setScaledContents(True) 
-        self.imagem_vencedor.setPixmap(QtGui.QPixmap('imagens/player1.png'))
-        self.imagem_vencedor.hide()
-        
+        self.imagem_vencedor_usuario = QLabel(self)
+        self.imagem_vencedor_usuario.move(490, 30)
+        self.imagem_vencedor_usuario.resize(100, 100)
+        self.imagem_vencedor_usuario.setScaledContents(True) 
+        self.imagem_vencedor_usuario.setPixmap(QtGui.QPixmap('imagens/player1.png'))
+        self.imagem_vencedor_usuario.hide()
+
+        self.imagem_vencedor_pc = QLabel(self)
+        self.imagem_vencedor_pc.move(490, 30)
+        self.imagem_vencedor_pc.resize(100, 80)
+        self.imagem_vencedor_pc.setScaledContents(True) 
+        self.imagem_vencedor_pc.setPixmap(QtGui.QPixmap('imagens/twitch.png'))
+        self.imagem_vencedor_pc.hide()
+
+        self.imagem_vencedor_velha = QLabel(self)
+        self.imagem_vencedor_velha.move(510, 40)
+        self.imagem_vencedor_velha.resize(70, 70)
+        self.imagem_vencedor_velha.setScaledContents(True) 
+        self.imagem_vencedor_velha.setPixmap(QtGui.QPixmap('imagens/velha.png'))
+        self.imagem_vencedor_velha.hide() 
 
         self.linha_vertical1 = QLabel(self)
         self.linha_vertical1.move(220, 150)
@@ -177,10 +194,10 @@ class Janela(QMainWindow): #Herança
         self.img_usuario.hide()
 
         self.img_pc = QLabel(self)
-        self.img_pc.move(270, 600)
-        self.img_pc.resize(60, 60)
+        self.img_pc.move(270, 605)
+        self.img_pc.resize(60, 50)
         self.img_pc.setScaledContents(True)
-        self.img_pc.setPixmap(QtGui.QPixmap('imagens/pc1.png'))
+        self.img_pc.setPixmap(QtGui.QPixmap('imagens/twitch.png'))
         self.img_pc.hide()
 
         self.img_velha = QLabel(self)
@@ -211,6 +228,13 @@ class Janela(QMainWindow): #Herança
         self.lbl_placar_velha.setStyleSheet('QLabel {color: "grey"; font: 30px}')
         self.lbl_placar_velha.hide()
 
+        self.botao_resetar = QPushButton("RESETAR JOGO", self)
+        self.botao_resetar.move(400, 5)
+        self.botao_resetar.resize(95, 20)
+        self.botao_resetar.setStyleSheet('QPushButton {font:12px bold; color: "green"; border:2px solid green; background: "white"; border-radius:10px;} QPushButton:hover{background:"green"; color:"white"; font: bold}')
+        self.botao_resetar.clicked.connect(self.resetar_jogo)
+        self.botao_resetar.hide()
+
         self.carregar_janela()
 
     def play_botao(self):
@@ -218,6 +242,7 @@ class Janela(QMainWindow): #Herança
         self.imagem.hide()
         self.imagem.hide()
         self.botao_play.hide()
+        self.botao_sair.show()
         self.linha_vertical1.show()
         self.linha_vertical2.show()
         self.linha_horizontal1.show()
@@ -240,115 +265,156 @@ class Janela(QMainWindow): #Herança
         self.pc_joga.show()
         self.usuario_joga.show()
         self.lbl_vencedor.show()
-        self.imagem_vencedor.show()
+        self.botao_resetar.show()
     
 
     def escolha_usuario(self, botao):
-        if botao == 1:
-            self.botao_preenchido_a1 = True
-            self.botao_a1.setText("X")
-            self.botao_a1.setDisabled(True)
-        elif botao == 2:
-            self.botao_preenchido_a2 = True
-            self.botao_a2.setText("X")
-            self.botao_a2.setDisabled(True)
-        elif botao == 3:
-            self.botao_preenchido_a3 = True
-            self.botao_a3.setText("X")
-            self.botao_a3.setDisabled(True)
-        elif botao == 4:
-            self.botao_preenchido_b1 = True
-            self.botao_b1.setText("X")
-            self.botao_b1.setDisabled(True)
-        elif botao == 5:
-            self.botao_preenchido_b2 = True
-            self.botao_b2.setText("X")
-            self.botao_b2.setDisabled(True)
-        elif botao == 6:
-            self.botao_preenchido_b3 = True
-            self.botao_b3.setText("X")
-            self.botao_b3.setDisabled(True)
-        elif botao == 7:
-            self.botao_preenchido_c1 = True
-            self.botao_c1.setText("X")
-            self.botao_c1.setDisabled(True)
-        elif botao == 8:
-            self.botao_preenchido_c2 = True
-            self.botao_c2.setText("X")
-            self.botao_c2.setDisabled(True)
-        elif botao == 9:
-            self.botao_preenchido_c3 = True
-            self.botao_c3.setText("X")
-            self.botao_c3.setDisabled(True)
+        if self.vez == 'jogador1':
+            if botao == 1:
+                self.botao_a1.setText("X")
+                self.botao_a1.setDisabled(True)
+                self.vez = 'jogador2'
+                self.botao_a1_bool = True
+                self.botao_a1.setStyleSheet('QPushButton {font:100px bold; color: "blue"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 2:
+                self.botao_a2.setText("X")
+                self.botao_a2.setDisabled(True)
+                self.vez = 'jogador2'
+                self.botao_a2_bool = True
+                self.botao_a2.setStyleSheet('QPushButton {font:100px bold; color: "blue"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 3:
+                self.botao_a3.setText("X")
+                self.botao_a3.setDisabled(True)
+                self.vez = 'jogador2'
+                self.botao_a3_bool = True
+                self.botao_a3.setStyleSheet('QPushButton {font:100px bold; color: "blue"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 4:
+                self.botao_b1.setText("X")
+                self.botao_b1.setDisabled(True)
+                self.vez = 'jogador2'
+                self.botao_b1_bool = True
+                self.botao_b1.setStyleSheet('QPushButton {font:100px bold; color: "blue"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 5:
+                self.botao_b2.setText("X")
+                self.botao_b2.setDisabled(True)
+                self.vez = 'jogador2'
+                self.botao_b2_bool = True
+                self.botao_b2.setStyleSheet('QPushButton {font:100px bold; color: "blue"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 6:
+                self.botao_b3.setText("X")
+                self.botao_b3.setDisabled(True)
+                self.vez = 'jogador2'
+                self.botao_b3_bool = True
+                self.botao_b3.setStyleSheet('QPushButton {font:100px bold; color: "blue"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 7:
+                self.botao_c1.setText("X")
+                self.botao_c1.setDisabled(True)
+                self.vez = 'jogador2'
+                self.botao_c1_bool = True
+                self.botao_c1.setStyleSheet('QPushButton {font:100px bold; color: "blue"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 8:
+                self.botao_c2.setText("X")
+                self.botao_c2.setDisabled(True)
+                self.vez = 'jogador2'
+                self.botao_c2_bool = True
+                self.botao_c2.setStyleSheet('QPushButton {font:100px bold; color: "blue"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 9:
+                self.botao_c3.setText("X")
+                self.botao_c3.setDisabled(True)
+                self.vez = 'jogador2'
+                self.botao_c3_bool = True
+                self.botao_c3.setStyleSheet('QPushButton {font:100px bold; color: "blue"; border:2px solid white; background: "white"; border-radius:10px;}')
+            
+            if self.verificar_vencedor_x():
+                self.placar_usuario += 1
+                self.lbl_placar_usuario.setText(str(self.placar_usuario))
+                self.imagem_vencedor_usuario.show()
+                self.botao_a1.setDisabled(True)
+                self.botao_a2.setDisabled(True)
+                self.botao_a3.setDisabled(True)
+                self.botao_b1.setDisabled(True)
+                self.botao_b2.setDisabled(True)
+                self.botao_b3.setDisabled(True)
+                self.botao_c1.setDisabled(True)
+                self.botao_c2.setDisabled(True)
+                self.botao_c3.setDisabled(True)
+            else:
+                if self.botao_a1_bool == True and self.botao_a2_bool == True and self.botao_a3_bool == True and self.botao_b1_bool == True and self.botao_b2_bool == True and self.botao_b3_bool == True and self.botao_c1_bool == True and self.botao_c2_bool == True and self.botao_c3_bool == True:
+                    self.verificar_velha()
 
-        if (self.verificar_vencedor_x()):
-            print('X ganhou')
         else:
-            print("o usuario apertou o botao ", botao)
-            self.escolha_pc()
-
-
-    def escolha_pc(self):
-        while True:
-            self.random_pc = randint(1,9)
-            if self.random_pc == 1 and self.botao_preenchido_a1 == False:
-                print('Sorteou o botao', self.random_pc)
+            if botao == 1:
                 self.botao_a1.setText("O")
                 self.botao_a1.setDisabled(True)
-                self.botao_preenchido_a1 = True
-                break
-            elif self.random_pc == 2 and self.botao_preenchido_a2 == False:
-                print('Sorteou o botao', self.random_pc)
+                self.vez = 'jogador1'
+                self.botao_a1_bool = True
+                self.botao_a1.setStyleSheet('QPushButton {font:100px bold; color: "red"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 2:
                 self.botao_a2.setText("O")
                 self.botao_a2.setDisabled(True)
-                self.botao_preenchido_a2 = True
-                break
-            elif self.random_pc == 3 and self.botao_preenchido_a3 == False:
-                print('Sorteou o botao', self.random_pc)
+                self.vez = 'jogador1'
+                self.botao_a2_bool = True
+                self.botao_a2.setStyleSheet('QPushButton {font:100px bold; color: "red"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 3:
                 self.botao_a3.setText("O")
                 self.botao_a3.setDisabled(True)
-                self.botao_preenchido_a3 = True
-                break
-            elif self.random_pc == 4 and self.botao_preenchido_b1 == False:
-                print('Sorteou o botao', self.random_pc)
+                self.vez = 'jogador1'
+                self.botao_a3_bool = True
+                self.botao_a3.setStyleSheet('QPushButton {font:100px bold; color: "red"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 4:
                 self.botao_b1.setText("O")
                 self.botao_b1.setDisabled(True)
-                self.botao_preenchido_b1 = True
-                break
-            elif self.random_pc == 5 and self.botao_preenchido_b2 == False:
-                print('Sorteou o botao', self.random_pc)
+                self.vez = 'jogador1'
+                self.botao_b1_bool = True
+                self.botao_b1.setStyleSheet('QPushButton {font:100px bold; color: "red"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 5:
                 self.botao_b2.setText("O")
                 self.botao_b2.setDisabled(True)
-                self.botao_preenchido_b2 = True
-                break
-            elif self.random_pc == 6 and self.botao_preenchido_b3 == False:
-                print('Sorteou o botao', self.random_pc)
+                self.vez = 'jogador1'
+                self.botao_b2_bool = True
+                self.botao_b2.setStyleSheet('QPushButton {font:100px bold; color: "red"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 6:
                 self.botao_b3.setText("O")
                 self.botao_b3.setDisabled(True)
-                self.botao_preenchido_b3 = True
-                break
-            elif self.random_pc == 7 and self.botao_preenchido_c1 == False:
-                print('Sorteou o botao', self.random_pc)
+                self.vez = 'jogador1'
+                self.botao_b3_bool = True
+                self.botao_b3.setStyleSheet('QPushButton {font:100px bold; color: "red"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 7:
                 self.botao_c1.setText("O")
                 self.botao_c1.setDisabled(True)
-                self.botao_preenchido_c1 = True
-                break
-            elif self.random_pc == 8 and self.botao_preenchido_c2 == False:
-                print('Sorteou o botao', self.random_pc)
+                self.vez = 'jogador1'
+                self.botao_c1_bool = True
+                self.botao_c1.setStyleSheet('QPushButton {font:100px bold; color: "red"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 8:
                 self.botao_c2.setText("O")
                 self.botao_c2.setDisabled(True)
-                self.botao_preenchido_c2 = True
-                break
-            elif self.random_pc == 9 and self.botao_preenchido_c3 == False:
-                print('Sorteou o botao', self.random_pc)
+                self.vez = 'jogador1'
+                self.botao_c2_bool = True
+                self.botao_c2.setStyleSheet('QPushButton {font:100px bold; color: "red"; border:2px solid white; background: "white"; border-radius:10px;}')
+            elif botao == 9:
                 self.botao_c3.setText("O")
                 self.botao_c3.setDisabled(True)
-                self.botao_preenchido_c3 = True
-                break
-            else:
-                continue        
-        if (self.verificar_vencedor_o()):
-            print('O ganhou')
+                self.vez = 'jogador1'
+                self.botao_c3_bool = True
+                self.botao_c3.setStyleSheet('QPushButton {font:100px bold; color: "red"; border:2px solid white; background: "white"; border-radius:10px;}')  
+            
+            if self.verificar_vencedor_o():
+                self.placar_pc += 1
+                self.lbl_placar_pc.setText(str(self.placar_pc))
+                self.imagem_vencedor_pc.show()
+                self.botao_a1.setDisabled(True)
+                self.botao_a2.setDisabled(True)
+                self.botao_a3.setDisabled(True)
+                self.botao_b1.setDisabled(True)
+                self.botao_b2.setDisabled(True)
+                self.botao_b3.setDisabled(True)
+                self.botao_c1.setDisabled(True)
+                self.botao_c2.setDisabled(True)
+                self.botao_c3.setDisabled(True)
+            else: 
+                if self.botao_a1_bool == True and self.botao_a2_bool == True and self.botao_a3_bool == True and self.botao_b1_bool == True and self.botao_b2_bool == True and self.botao_b3_bool == True and self.botao_c1_bool == True and self.botao_c2_bool == True and self.botao_c3_bool == True:
+                    self.verificar_velha()
+
 
     def verificar_vencedor_x(self):
         if self.botao_a1.text() == "X" and self.botao_a2.text() == "X" and self.botao_a3.text() == "X":
@@ -390,7 +456,51 @@ class Janela(QMainWindow): #Herança
             return True
         else:
             return False
+
+    def verificar_velha(self):
+        self.placar_velha += 1
+        self.lbl_placar_velha.setText(str(self.placar_velha))
+        self.imagem_vencedor_velha.show()
+
+    def resetar_jogo(self):
+            self.vez = 'jogador1'
+            self.botao_a1.setDisabled(False)
+            self.botao_a2.setDisabled(False)
+            self.botao_a3.setDisabled(False)
+            self.botao_b1.setDisabled(False)
+            self.botao_b2.setDisabled(False)
+            self.botao_b3.setDisabled(False)
+            self.botao_c1.setDisabled(False)
+            self.botao_c2.setDisabled(False)
+            self.botao_c3.setDisabled(False)
+
+            self.botao_a1.setText("")
+            self.botao_a2.setText("")
+            self.botao_a3.setText("")
+            self.botao_b1.setText("")
+            self.botao_b2.setText("")
+            self.botao_b3.setText("")
+            self.botao_c1.setText("")
+            self.botao_c2.setText("")
+            self.botao_c3.setText("")
+
+            self.botao_a1_bool = False
+            self.botao_a2_bool = False
+            self.botao_a3_bool = False
+            self.botao_b1_bool = False
+            self.botao_b2_bool = False
+            self.botao_b3_bool = False
+            self.botao_c1_bool = False
+            self.botao_c2_bool = False
+            self.botao_c3_bool = False
+
+            self.imagem_vencedor_usuario.hide()
+            self.imagem_vencedor_pc.hide()
+            self.imagem_vencedor_velha.hide()
         
+
+    def sair(self):
+        sys.exit()
 
     def carregar_janela(self):
         self.setGeometry(self.esquerda, self.topo, self.largura, self.altura)
